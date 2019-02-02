@@ -3,9 +3,14 @@ const router = express.Router();
 
 const httpClient = require('../util/httpClient');
 
+const jenkinsPort = '8080';
+const jiraPort = '8085';
+const jiraUser = 'Administrator';
+const jiraPwd = 'CAdemo123';
+
 router.post('/release', async (req, rsp) => {
     const result = await httpClient.send('GET', 
-        `http://localhost:8080/job/LisaBank/buildWithParameters?token=token&releaseVersion=${req.body.version.name}`, 
+        `http://localhost:${jenkinsPort}/job/LisaBank/buildWithParameters?token=token&releaseVersion=${req.body.version.name}`, 
         false, undefined, 'admin', 'admin');
     
     rsp.send('ok');
@@ -13,7 +18,7 @@ router.post('/release', async (req, rsp) => {
 
 router.post('/testCase', async (req, rsp) => {
     await new Promise(resolve => setTimeout(resolve, 300));
-    const issue = await httpClient.send('GET', `http://localhost:8085/rest/api/2/issue/${req.body.issue.id}`, true, undefined, 'adelbs', 'sadb123');
+    const issue = await httpClient.send('GET', `http://localhost:${jiraPort}/rest/api/2/issue/${req.body.issue.id}`, true, undefined, jiraUser, jiraPwd);
 
     let attID = 0;
     const attachments = issue.body.fields.attachment;
@@ -25,11 +30,11 @@ router.post('/testCase', async (req, rsp) => {
     }
 
     if (attID > 0) {
-        const urlCreateStep = `http://localhost:8085/rest/zapi/latest/teststep/${issue.body.id}`;
-        const fileURL = `http://localhost:8085/secure/attachment/${attID}/`;
-        const fileURLDelete = `http://localhost:8085/rest/api/2/attachment/${attID}`;
+        const urlCreateStep = `http://localhost:${jiraPort}/rest/zapi/latest/teststep/${issue.body.id}`;
+        const fileURL = `http://localhost:${jiraPort}/secure/attachment/${attID}/`;
+        const fileURLDelete = `http://localhost:${jiraPort}/rest/api/2/attachment/${attID}`;
 
-        const zephyrScript = await httpClient.send('GET', fileURL, false, undefined, 'adelbs', 'sadb123');
+        const zephyrScript = await httpClient.send('GET', fileURL, false, undefined, jiraUser, jiraPwd);
     
         let stepLines;
         let strStep;
@@ -68,11 +73,11 @@ router.post('/testCase', async (req, rsp) => {
                     step: strStep,
                     data: strData,
                     result: strExpected
-                }, 'adelbs', 'sadb123');
+                }, jiraUser, jiraPwd);
             }
         }
 
-        await httpClient.send('DELETE', fileURLDelete, true, undefined, 'adelbs', 'sadb123');
+        await httpClient.send('DELETE', fileURLDelete, true, undefined, jiraUser, jiraPwd);
     }
 
     rsp.send('ok');

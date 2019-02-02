@@ -27,7 +27,6 @@ table tbody tr:hover {
 
 table tbody td {
     border-bottom: #CDCDCD 2px solid;
-    text-transform: capitalize;
 }
 
 .status {
