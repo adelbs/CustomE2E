@@ -1,0 +1,19 @@
+{
+    "sv": {
+        "host": "localhost",
+        "port": 1505,
+        "user": "admin",
+        "pwd": "admin",
+        "vseName": "VSE"
+    },
+    "tdm": {
+        "host": "localhost",
+        "port": 8088,
+        "user": "administrator",
+        "pwd": "marmite",
+        "defaultProject": {
+            "projectId": 2365,
+            "versionId": 2366
+        }
+    }
+}

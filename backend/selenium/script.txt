@@ -1,0 +1,70 @@
+async function run() {
+    setStep('Acessar LisaBank');
+    await driver.get('http://localhost:8180/lisabank/home.do');
+
+    setStep('Validar Login');
+    await driver.findElement(By.name('username')).sendKeys('felipe');
+    await driver.findElement(By.name('password')).sendKeys('1234');
+    await driver.findElement(By.css('input[type="submit"]')).click();
+
+    setStep('Login ok');
+    await driver.wait(until.elementLocated(By.css('img[alt="Fund Statistics"]')), 2000);
+
+    setStep('Possui Conta Cadastrada?');
+
+    setStep('Validar Lista de Contas');
+    await driver.wait(until.elementLocated(By.css('td.primary > a')), 2000);
+
+    setStep('Trabalhar em Alguma Conta?');
+
+    setStep('Selecionar uma conta na lista');
+    await driver.findElement(By.css('.primary > a')).click();
+    await driver.wait(until.elementLocated(By.css('#deposit_money')), 2000);
+
+    setStep('Operacao');
+
+    setStep('Informar Dados Deposito');
+    await driver.findElement(By.css('#deposit_money')).click();
+    await driver.wait(until.elementLocated(By.css('input[name="password"]')), 2000);
+
+    setStep('Validar Dados Operacao');
+    await driver.findElement(By.name('password')).sendKeys('1234');
+    await driver.findElement(By.name('amount')).sendKeys('');
+    await driver.findElement(By.css('td.secondary > input.button')).click();
+
+    setStep('Invalid Amount');
+    await driver.wait(until.elementLocated(By.xpath('//div[@id="fixed-top-contentbox"]/table/tbody/tr[3]/td/table/tbody/tr/td[2]/h3/font')), 2000);
+
+    setStep('Escolher Funcionalidade');
+
+    setStep('Acessar funcionalidade View Profile');
+    await driver.findElement(By.css('#view_profile')).click();
+    await driver.wait(until.elementLocated(By.css('#modify_user')), 2000);
+
+    setStep('Validar Detalhes');
+
+    setStep('Possui Enderecos?');
+
+    setStep('Validar Enderecos');
+
+    setStep('Adicionar Endereco?');
+
+    setStep('Acessar funcionalidade Add Address');
+    await driver.findElement(By.css('#add_address')).click();
+    await driver.wait(until.elementLocated(By.css('input[name="zip"]')), 2000);
+
+    setStep('Informar dados de Endereco');
+    await driver.findElement(By.name('addressLine1')).sendKeys('');
+    await driver.findElement(By.name('addressLine2')).sendKeys('');
+    await driver.findElement(By.name('city')).sendKeys('ARD City');
+    await driver.findElement(By.name('zip')).sendKeys('01434');
+    await driver.findElement(By.css('td.secondary > input.button')).click();
+
+    setStep('Invalid Address');
+    await driver.wait(until.elementLocated(By.xpath('//div[@id="fixed-top-contentbox"]/table/tbody/tr[3]/td/table/tbody/tr/td[2]/h3/font')), 2000);
+
+    setStep('Logout?');
+
+    setStep('Efetuar Log out');
+    await driver.findElement(By.css('#logout')).click();
+}

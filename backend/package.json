@@ -1,0 +1,23 @@
+{
+  "name": "lisabank",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Felipe Jacob",
+  "license": "ISC",
+  "dependencies": {
+    "basic-auth-token": "^0.4.2",
+    "ca-tools": "^0.2.4",
+    "express": "^4.16.3",
+    "geckodriver": "^1.14.1",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.2",
+    "saucelabs": "^1.5.0",
+    "selenium-webdriver": "^4.0.0-alpha.1",
+    "xml2js": "^0.4.19",
+    "xml2js-es6-promise": "^1.1.1"
+  }
+}
