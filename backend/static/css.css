@@ -1,0 +1,39 @@
+.title {
+    width: 100%;
+    text-align: center;
+}
+
+h2 {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+table {
+    width: 80%;
+    margin-left: 10%;
+    margin-right: 10%;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    border-collapse: collapse;
+}
+
+table thead td {
+    color: white;
+    background-color: darkcyan;
+    border-bottom: #CDCDCD 2px solid;
+}
+
+table tbody tr:hover {
+    background-color: beige;
+}
+
+table tbody td {
+    border-bottom: #CDCDCD 2px solid;
+    text-transform: capitalize;
+}
+
+.status {
+    text-align: center;
+}
+
+img {
+    width: 20px;
+}
