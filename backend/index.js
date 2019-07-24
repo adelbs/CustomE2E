@@ -1,3 +1,5 @@
+const config = require('./config/config.js')
+
 const express = require('express');
 const app = express();
 
@@ -12,17 +14,19 @@ const services = require('./routes/services');
 app.use(express.json());
 app.use(express.static('static'));
 
-app.use('/jira', jira);
-app.use('/jenkins', jenkins);
-app.use('/cdd', cdd);
+app.use('/api/jira', jira);
+app.use('/api/jenkins', jenkins);
+app.use('/api/cdd', cdd);
 
-app.use('/deploy', deploy);
-app.use('/backend', backend);
-app.use('/services', services);
+app.use('/api/deploy', deploy);
+app.use('/api/backend', backend);
+app.use('/api/services', services);
 
-const port = 8099;
+app.get('/jira', (req, res) => res.redirect(config.jira.url));
+app.get('/jenkins', (req, res) => res.redirect(config.jenkins.url));
+app.get('/cdd', (req, res) => res.redirect(config.cdd.url));
+
+const port = 3500;
 app.listen(port, () => {
-    console.log('Integration services are running...');
-    console.log();
     console.log(`Waiting for requrest (port ${port})...`);
 });

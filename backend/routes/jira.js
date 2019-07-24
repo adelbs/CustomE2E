@@ -1,24 +1,23 @@
+const config = require('../config/config.js')
+
 const express = require('express');
 const router = express.Router();
 
 const httpClient = require('../util/httpClient');
 
-const jenkinsPort = '8080';
-const jiraPort = '8085';
-const jiraUser = 'Administrator';
-const jiraPwd = 'CAdemo123';
-
 router.post('/release', async (req, rsp) => {
     const result = await httpClient.send('GET', 
-        `http://localhost:${jenkinsPort}/job/LisaBank/buildWithParameters?token=token&releaseVersion=${req.body.version.name}`, 
-        false, undefined, 'admin', 'admin');
+        `${config.jenkins.url}/job/LisaBank/buildWithParameters?token=token&releaseVersion=${req.body.version.name}`, 
+        false, undefined, config.jenkins.usr, config.jenkins.pwd);
     
+    console.log(`GET ${config.jenkins.url}/job/LisaBank/buildWithParameters?token=token&releaseVersion=${req.body.version.name}`);
+    console.log(result.body);
     rsp.send('ok');
 });
 
 router.post('/testCase', async (req, rsp) => {
     await new Promise(resolve => setTimeout(resolve, 300));
-    const issue = await httpClient.send('GET', `http://localhost:${jiraPort}/rest/api/2/issue/${req.body.issue.id}`, true, undefined, jiraUser, jiraPwd);
+    const issue = await httpClient.send('GET', `${config.jira}/rest/api/2/issue/${req.body.issue.id}`, true, undefined, config.jira.usr, config.jira.pwd);
 
     let attID = 0;
     const attachments = issue.body.fields.attachment;
@@ -30,11 +29,11 @@ router.post('/testCase', async (req, rsp) => {
     }
 
     if (attID > 0) {
-        const urlCreateStep = `http://localhost:${jiraPort}/rest/zapi/latest/teststep/${issue.body.id}`;
-        const fileURL = `http://localhost:${jiraPort}/secure/attachment/${attID}/`;
-        const fileURLDelete = `http://localhost:${jiraPort}/rest/api/2/attachment/${attID}`;
+        const urlCreateStep = `${config.jira}/rest/zapi/latest/teststep/${issue.body.id}`;
+        const fileURL = `${config.jira}/secure/attachment/${attID}/`;
+        const fileURLDelete = `${config.jira}/rest/api/2/attachment/${attID}`;
 
-        const zephyrScript = await httpClient.send('GET', fileURL, false, undefined, jiraUser, jiraPwd);
+        const zephyrScript = await httpClient.send('GET', fileURL, false, undefined, config.jira.usr, config.jira.pwd);
     
         let stepLines;
         let strStep;
@@ -73,11 +72,11 @@ router.post('/testCase', async (req, rsp) => {
                     step: strStep,
                     data: strData,
                     result: strExpected
-                }, jiraUser, jiraPwd);
+                }, config.jira.usr, config.jira.pwd);
             }
         }
 
-        await httpClient.send('DELETE', fileURLDelete, true, undefined, jiraUser, jiraPwd);
+        await httpClient.send('DELETE', fileURLDelete, true, undefined, config.jira.usr, config.jira.pwd);
     }
 
     rsp.send('ok');

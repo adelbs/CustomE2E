@@ -1,27 +1,30 @@
+const config = require('../config/config.js')
+
 const express = require('express');
 const router = express.Router();
 
 const httpClient = require('../util/httpClient');
 
+const baseUrl = `${config.cdd.url}${config.cdd.apiUrl}/releases/${config.cdd.apiParams.releaseId}`;
+
 router.post('/cdd', async (req, rsp) => {
 
-    const resCreateVersion = await httpClient.send('POST',
-        `http://localhost:8082/cdd/design/00000000-0000-0000-0000-000000000000/v1/releases/3/application-versions?force=true`,
-        true,
-        {
-            "className": "ApplicationVersionDto",
-            "name": req.body.releaseVersion,
-            "application": {
-                "className": "ApplicationDto",
-                "id": 2,
-                "name": "LisaBank",
-                "deletable": true,
-                "sourceName": "Local",
-                "applicationVersions": null,
-                "oldName": null
-            },
-            "isOpened": false
-        }, 'superuser@ca.com', 'suser');
+    const resCreateVersion = await httpClient.send('POST', `${baseUrl}/application-versions?force=true`, true,
+        { 
+            'className': 'ApplicationVersionDto', 
+            'name': req.body.releaseVersion, 
+            'application': { 
+                'className': 'ApplicationDto', 
+                'id': config.cdd.apiParams.applicationId, 
+                'name': config.cdd.apiParams.applicationName
+            }, 
+            'basedOn': { 
+                'className': 'ApplicationVersionDto', 
+                'id': 1, 
+                'name': '1.0'
+            }, 
+            'isOpened': false 
+        }, config.cdd.usr, config.cdd.pwd);
 
     const resCreateContent = await httpClient.send('POST',
         `http://localhost:8082/cdd/design/00000000-0000-0000-0000-000000000000/v1/releases/3/application-versions/${resCreateVersion.body.data.id}/content-sources`,

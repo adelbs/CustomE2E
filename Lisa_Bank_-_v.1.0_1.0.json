@@ -1,0 +1,65 @@
+{
+    "objects": [{
+        "application": "Local|Lisa Bank",
+        "name": "1.0",
+        "kind": "ApplicationVersion"
+    }, {
+        "applicationVersion": "Local|Lisa Bank/1.0",
+        "name": "Jira",
+        "kind": "ContentSource",
+        "type": "JIRA JQL",
+        "parameters": {
+            "query": "fixVersion = 1.0"
+        },
+        "endpoint": "Jira",
+        "plugin": "Jira/1.2.3"
+    }, {
+        "version": "1.0",
+        "applicationVersions": ["Local|Lisa Bank/1.0"],
+        "ownerParties": ["superuser@ca.com"],
+        "runOnCreation": false,
+        "name": "Lisa Bank - v.1.0",
+        "kind": "Release"
+    }, {
+        "environments": ["QA - Functional"],
+        "approvalGate": "AUTOMATIC",
+        "skipTasksWithUnchangedApplications": false,
+        "release": "Lisa Bank - v.1.0/1.0",
+        "isApprovalRequired": false,
+        "name": "QA - Functional",
+        "kind": "Phase"
+    }, {
+        "environments": ["QA - Non Functional"],
+        "approvalGate": "AUTOMATIC",
+        "skipTasksWithUnchangedApplications": false,
+        "previousPhase": "QA - Functional",
+        "release": "Lisa Bank - v.1.0/1.0",
+        "isApprovalRequired": false,
+        "name": "QA - Non Functional",
+        "kind": "Phase"
+    }, {
+        "environments": ["Production"],
+        "approvalGate": "AUTOMATIC",
+        "skipTasksWithUnchangedApplications": false,
+        "previousPhase": "QA - Non Functional",
+        "release": "Lisa Bank - v.1.0/1.0",
+        "isApprovalRequired": false,
+        "name": "Production",
+        "kind": "Phase"
+    }, {
+        "phase": "Lisa Bank - v.1.0/1.0/QA - Functional",
+        "isDisabled": false,
+        "name": "Test",
+        "kind": "Task"
+    }, {
+        "phase": "Lisa Bank - v.1.0/1.0/QA - Non Functional",
+        "isDisabled": false,
+        "name": "Test",
+        "kind": "Task"
+    }, {
+        "phase": "Lisa Bank - v.1.0/1.0/Production",
+        "isDisabled": false,
+        "name": "Test",
+        "kind": "Task"
+    }]
+}
