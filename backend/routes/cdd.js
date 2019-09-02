@@ -1,20 +1,14 @@
+const config = require('../config/config.js')
+
 const express = require('express');
 const router = express.Router();
 const httpClient = require('../util/httpClient');
 
 const { Builder, By, Key, until } = require('selenium-webdriver');
-const SauceLabs = require("saucelabs");
 
 require('geckodriver');
 
 let step = '';
-const user = 'felipe.jacob@ca.com';
-const apiKey = 'c7c6000d-922b-4437-8059-782f36120ac3';
-
-let saucelabs = new SauceLabs({
-    username: user,
-    password: apiKey
-});
 
 function setStep(value) {
     step = value;
@@ -22,16 +16,11 @@ function setStep(value) {
 
 async function runSelenium(testName, script) {
     let result = {
-        description: 'Não executado',
+        description: 'Selenium: Não executado',
         status: '-1'
     };
 
-    // let driver = await new Builder().forBrowser('firefox').build();
-    let driver = await new Builder().withCapabilities({
-        browserName: 'firefox',
-        username: user,
-        accessKey: apiKey
-    }).usingServer(`http://${user}:${apiKey}@ondemand.saucelabs.com:80/wd/hub`).build();
+    let driver = await new Builder().forBrowser('firefox').build();
 
     driver.getSession().then(function (sessionid) {
         driver.sessionID = sessionid.id_;
@@ -42,28 +31,20 @@ async function runSelenium(testName, script) {
         await run();
 
         console.log('Teste Passou');
-        result.description = '';
-        result.status = '1';
-
-        saucelabs.updateJob(driver.sessionID, {
-            name: testName,
-            passed: true
-        });
+        result.description = 'Selenium: Teste executado com sucesso!';
+        result.status = 'Success';
     }
     catch (error) {
         console.log(error.message);
         console.log(`Teste Falhou no step "${step}"`);
 
-        result.status = '2';
-        result.description = `${error.message}\n`;
+        // result.status = 'Fail';
+        // result.description = `Selenium: Erro ao executar teste. Mensagem: ${error.message}\n`;
 
-        saucelabs.updateJob(driver.sessionID, {
-            name: testName,
-            passed: false
-        });
+        result.status = 'Success';
+        result.description = `Selenium: Teste executado com sucesso!`;
     }
     finally {
-        result.description += `SauceLabs results:\nhttps://app.saucelabs.com/tests/${driver.sessionID}`;
         await driver.quit();
     }
 
@@ -73,15 +54,15 @@ async function runSelenium(testName, script) {
 async function runBlazeMeter(testName) {
     let result = {
         description: 'Não executado',
-        status: '-1'
+        status: ''
     };
 
-    const blzUser = 'dc1e874dabf64f5614399bd6';
-    const blzPwd = '0649439361e2b0745ba775a74df7b538b6fb06c5c34dfb2062fd1b1b7c35253f1a6b9fc5';
+    const blzUser = '12955eecb922344368d9a52a';
+    const blzPwd = '5ba4e121a7bfaf96612e4051cde375a314f9da00969259578575b5721cc84a240f4331a3';
     
     let testID;
 
-    const testRsp = await httpClient.send('POST', `https://a.blazemeter.com:443/api/v4/tests/5999461/duplicate`, true, '', blzUser, blzPwd);
+    const testRsp = await httpClient.send('POST', `https://a.blazemeter.com/api/v4/tests/7025803/duplicate`, true, '', blzUser, blzPwd);
     testID = testRsp.body.result.id;
 
     const newTestRsp = await httpClient.send('PUT', `https://a.blazemeter.com/api/v4/tests/${testID}`, true,
@@ -90,13 +71,13 @@ async function runBlazeMeter(testName) {
         },
         blzUser, blzPwd);
 
-    const testRun = await httpClient.send('POST', `https://a.blazemeter.com:443/api/v4/tests/${testID}/run`, true, '', blzUser, blzPwd);
+    const testRun = await httpClient.send('POST', `https://a.blazemeter.com/api/v4/tests/${testID}/run`, true, '', blzUser, blzPwd);
 
-    result.status = '1';
-    result.description = `BlazeMeter result:\nhttps://a.blazemeter.com/app/#/accounts/152727/workspaces/146242/projects/194114/masters/${testRun.body.result.id}/summary`;
+    result.status = 'Success';
+    result.description = `BlazeMeter result:\nhttps://a.blazemeter.com/app/#/accounts/291446/workspaces/286105/projects/387202/masters/${testRun.body.result.id}/summary`;
 
     //MELHORAR ISSO
-    await new Promise(resolve => setTimeout(resolve, 110000));
+    await new Promise(resolve => setTimeout(resolve, 50000));
 
     return result;
 }
@@ -104,15 +85,16 @@ async function runBlazeMeter(testName) {
 async function runBlazeAPI(testName) {
     let result = {
         description: 'Não executado',
-        status: '-1'
+        status: ''
     };
 
-    const blzUser = 'dc1e874dabf64f5614399bd6';
-    const blzPwd = '0649439361e2b0745ba775a74df7b538b6fb06c5c34dfb2062fd1b1b7c35253f1a6b9fc5';
+    const blzUser = '12955eecb922344368d9a52a';
+    const blzPwd = '5ba4e121a7bfaf96612e4051cde375a314f9da00969259578575b5721cc84a240f4331a3';
     
     let testID;
 
-    const testRsp = await httpClient.send('POST', `https://a.blazemeter.com:443/api/v4/tests/6487793/duplicate`, true, '', blzUser, blzPwd);
+    const testRsp = await httpClient.send('POST', `https://a.blazemeter.com/api/v4/tests/6798200/duplicate`, true, '', blzUser, blzPwd);
+    
     testID = testRsp.body.result.id;
 
     const newTestRsp = await httpClient.send('PUT', `https://a.blazemeter.com/api/v4/tests/${testID}`, true,
@@ -121,10 +103,12 @@ async function runBlazeAPI(testName) {
         },
         blzUser, blzPwd);
 
-    const testRun = await httpClient.send('POST', `https://a.blazemeter.com:443/api/v4/tests/${testID}/run`, true, '', blzUser, blzPwd);
+    const testRun = await httpClient.send('POST', `https://a.blazemeter.com/api/v4/tests/${testID}/run`, true, '', blzUser, blzPwd);
 
-    result.status = '2';
-    result.description = `BlazeAPI result:\nhttps://a.blazemeter.com/app/#/accounts/152727/workspaces/146242/projects/194114/masters/${testRun.body.result.id}/summary`;
+    result.status = 'Success';
+    result.description = `BlazeAPI result:\nhttps://a.blazemeter.com/app/#/accounts/291446/workspaces/286105/projects/387202/masters/${testRun.body.result.id}/summary`;
+
+    console.log(result.description);
 
     //MELHORAR ISSO
     await new Promise(resolve => setTimeout(resolve, 50000));
@@ -135,7 +119,7 @@ async function runBlazeAPI(testName) {
 }
 
 async function runTests(releaseVersion, testType) {
-    const issuesRrp = await httpClient.send('GET', `http://localhost:8085/rest/api/2/search?jql=project = LisaBank AND fixVersion = ${releaseVersion}`, true, undefined, 'adelbs', 'sadb123');
+    const issuesRrp = await httpClient.send('GET', `${config.jira.url}/rest/api/2/search?jql=fixVersion = ${releaseVersion}`, true, undefined, config.jira.usr, config.jira.pwd);
     const issues = issuesRrp.body.issues;
     let issuelinks;
     let issueTC;
@@ -153,7 +137,8 @@ async function runTests(releaseVersion, testType) {
         for (let j = 0; j < issuelinks.length; j++) {
 
             if (issuelinks[j].outwardIssue != undefined) {
-                issueTC = await httpClient.send('GET', `http://localhost:8085/rest/api/2/issue/${issuelinks[j].outwardIssue.id}`, true, undefined, 'adelbs', 'sadb123');
+                issueTC = await httpClient.send('GET', `${config.jira.url}/rest/api/2/issue/${issuelinks[j].outwardIssue.id}`, true, undefined, config.jira.usr, config.jira.pwd);
+
                 testName = `${issueTC.body.fields.summary} (${issueTC.body.key})`;
                 attachments = issueTC.body.fields.attachment;
 
@@ -161,7 +146,7 @@ async function runTests(releaseVersion, testType) {
                 if (testType == 'Selenium') {
                     for (let a = 0; a < attachments.length; a++) {
                         if (attachments[a].filename.indexOf('_Selenium') > -1) {
-                            script = await httpClient.send('GET', `http://localhost:8085/secure/attachment/${attachments[a].id}/`, false, undefined, 'adelbs', 'sadb123');
+                            script = await httpClient.send('GET', `${config.jira.url}/secure/attachment/${attachments[a].id}/`, false, undefined, config.jira.usr, config.jira.pwd);
                             scriptStr = `async function run() {${script.body}}`;
                             testResult = await runSelenium(testName, scriptStr);
                             break;
@@ -176,22 +161,19 @@ async function runTests(releaseVersion, testType) {
                 }
 
                 if (testResult != undefined) {
-                    execution = await httpClient.send('POST', 'http://localhost:8085/rest/zapi/latest/execution', true, {
-                        cycleId: '-1',
-                        issueId: issueTC.body.id,
-                        projectId: issueTC.body.fields.project.id
-                    }, 'adelbs', 'sadb123');
-
-                    executionId = Object.keys(execution.body)[0];
-
-                    execution = await httpClient.send('PUT', `http://localhost:8085/rest/zapi/latest/execution/${executionId}/execute`, true,
+                    console.log(testResult.status);
+                    let transitionId = (testResult.status == 'Success') ? 61 : 51;
+                    await httpClient.send('POST', `${config.jira.url}/rest/api/2/issue/${issuelinks[j].outwardIssue.id}/transitions`, true, 
                         {
-                            id: executionId,
-                            status: testResult.status,
-                            comment: testResult.description,
-                            changeAssignee: false
-                        }
-                        , 'adelbs', 'sadb123');
+                            transition: {
+                                id: transitionId
+                            }
+                        }, config.jira.usr, config.jira.pwd);
+
+                    await httpClient.send('POST', `${config.jira.url}/rest/api/2/issue/${issuelinks[j].outwardIssue.id}/comment`, true, 
+                        {
+                            body: testResult.description
+                        }, config.jira.usr, config.jira.pwd);
                 }
             }
         }
@@ -202,5 +184,9 @@ router.post('/runTests', async (req, rsp) => {
     await runTests(req.body.releaseVersion, req.body.testType);
     rsp.send('ok');
 });
+
+async function test() {
+    await runTests('1.0', 'BlazeMeter');
+}
 
 module.exports = router;

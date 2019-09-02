@@ -1,0 +1,261 @@
+{
+    "objects": [{
+        "application": "Local|Lisa Bank",
+        "name": "0.0",
+        "kind": "ApplicationVersion"
+    }, {
+        "applicationVersion": "Local|Lisa Bank/0.0",
+        "name": "Jira",
+        "kind": "ContentSource",
+        "type": "JIRA JQL",
+        "parameters": {
+            "query": "fixVersion = 0.0"
+        },
+        "endpoint": "Jira",
+        "plugin": "Jira/1.2.3"
+    }, {
+        "version": "0.0",
+        "applicationVersions": ["Local|Lisa Bank/0.0"],
+        "ownerParties": ["superuser@ca.com"],
+        "runOnCreation": false,
+        "name": "Lisa Bank - v.0.0",
+        "kind": "Release"
+    }, {
+        "value": "0.0",
+        "scope": "PHASE_SCOPE",
+        "release": "Lisa Bank - v.0.0/0.0",
+        "name": "version",
+        "kind": "ReleaseToken"
+    }, {
+        "environments": ["QA - Functional"],
+        "approvalGate": "AUTOMATIC",
+        "skipTasksWithUnchangedApplications": false,
+        "release": "Lisa Bank - v.0.0/0.0",
+        "isApprovalRequired": false,
+        "name": "QA - Functional",
+        "kind": "Phase"
+    }, {
+        "environments": ["QA - Non Functional"],
+        "approvalGate": "AUTOMATIC",
+        "skipTasksWithUnchangedApplications": false,
+        "previousPhase": "QA - Functional",
+        "release": "Lisa Bank - v.0.0/0.0",
+        "isApprovalRequired": false,
+        "name": "QA - Non Functional",
+        "kind": "Phase"
+    }, {
+        "environments": ["Production"],
+        "approvalGate": "AUTOMATIC",
+        "skipTasksWithUnchangedApplications": false,
+        "previousPhase": "QA - Non Functional",
+        "release": "Lisa Bank - v.0.0/0.0",
+        "isApprovalRequired": false,
+        "name": "Production",
+        "kind": "Phase"
+    }, {
+        "applicationVersions": ["Local|Lisa Bank/0.0"],
+        "phase": "Lisa Bank - v.0.0/0.0/QA - Functional",
+        "isDisabled": false,
+        "name": "Deploy QA",
+        "kind": "Task",
+        "type": "REST",
+        "parameters": {
+            "method": "GET",
+            "statusCheck": "false",
+            "url": "/api/deploy/time/15111"
+        },
+        "endpoint": "Backend",
+        "plugin": "REST/2.4"
+    }, {
+        "phase": "Lisa Bank - v.0.0/0.0/QA - Functional",
+        "isDisabled": false,
+        "previousTasks": ["Deploy QA"],
+        "name": "Subir Serviços Virtuais",
+        "kind": "Task",
+        "type": "REST",
+        "parameters": {
+            "method": "GET",
+            "statusCheck": "false",
+            "url": "/api/deploy/time/15111"
+        },
+        "endpoint": "Backend",
+        "plugin": "REST/2.4"
+    }, {
+        "phase": "Lisa Bank - v.0.0/0.0/QA - Functional",
+        "isDisabled": false,
+        "previousTasks": ["Deploy QA"],
+        "name": "Gerar Massa de Dados",
+        "kind": "Task",
+        "type": "REST",
+        "parameters": {
+            "method": "GET",
+            "statusCheck": "false",
+            "url": "/api/deploy/time/11111"
+        },
+        "endpoint": "Backend",
+        "plugin": "REST/2.4"
+    }, {
+        "phase": "Lisa Bank - v.0.0/0.0/QA - Functional",
+        "isDisabled": false,
+        "previousTasks": ["Subir Serviços Virtuais", "Gerar Massa de Dados"],
+        "name": "Executar Testes UI",
+        "kind": "Task",
+        "type": "REST",
+        "parameters": {
+            "method": "POST",
+            "statusCheck": "false",
+            "body": "{\n\"releaseVersion\": \"%version%\",\n\"testType\": \"Selenium\"\n}",
+            "url": "/api/cdd/runTests/"
+        },
+        "endpoint": "Backend",
+        "plugin": "REST/2.4"
+    }, {
+        "phase": "Lisa Bank - v.0.0/0.0/QA - Functional",
+        "isDisabled": false,
+        "previousTasks": ["Subir Serviços Virtuais", "Gerar Massa de Dados"],
+        "name": "Executar Testes API",
+        "kind": "Task",
+        "type": "REST",
+        "parameters": {
+            "method": "POST",
+            "statusCheck": "false",
+            "body": "{\n\"releaseVersion\": \"%version%\",\n\"testType\": \"BlazeAPI\"\n}",
+            "url": "/api/cdd/runTests/"
+        },
+        "endpoint": "Backend",
+        "plugin": "REST/2.4"
+    }, {
+        "phase": "Lisa Bank - v.0.0/0.0/QA - Functional",
+        "isDisabled": false,
+        "previousTasks": ["Executar Testes UI", "Executar Testes API"],
+        "name": "Coletar resultados",
+        "kind": "Task",
+        "type": "REST",
+        "parameters": {
+            "method": "GET",
+            "statusCheck": "false",
+            "url": "/api/deploy/time/11111"
+        },
+        "endpoint": "Backend",
+        "plugin": "REST/2.4"
+    }, {
+        "applicationVersions": ["Local|Lisa Bank/0.0"],
+        "phase": "Lisa Bank - v.0.0/0.0/QA - Non Functional",
+        "isDisabled": false,
+        "name": "Deploy Sec",
+        "kind": "Task",
+        "type": "REST",
+        "parameters": {
+            "method": "GET",
+            "statusCheck": "false",
+            "url": "/api/deploy/time/15111"
+        },
+        "endpoint": "Backend",
+        "plugin": "REST/2.4"
+    }, {
+        "phase": "Lisa Bank - v.0.0/0.0/QA - Non Functional",
+        "isDisabled": false,
+        "previousTasks": ["Deploy Sec"],
+        "name": "Executar Testes Performance",
+        "kind": "Task",
+        "type": "REST",
+        "parameters": {
+            "method": "POST",
+            "statusCheck": "false",
+            "body": "{\n\"releaseVersion\": \"%version%\",\n\"testType\": \"BlazeMeter\"\n}",
+            "url": "/api/cdd/runTests/"
+        },
+        "endpoint": "Backend",
+        "plugin": "REST/2.4"
+    }, {
+        "phase": "Lisa Bank - v.0.0/0.0/QA - Non Functional",
+        "isDisabled": false,
+        "previousTasks": ["Deploy Sec"],
+        "name": "Executar Testes Segurança",
+        "kind": "Task"
+    }, {
+        "phase": "Lisa Bank - v.0.0/0.0/QA - Non Functional",
+        "isDisabled": false,
+        "previousTasks": ["Executar Testes Performance", "Executar Testes Segurança"],
+        "name": "Coletar resultados",
+        "kind": "Task",
+        "type": "REST",
+        "parameters": {
+            "method": "GET",
+            "statusCheck": "false",
+            "url": "/api/deploy/time/5111"
+        },
+        "endpoint": "Backend",
+        "plugin": "REST/2.4"
+    }, {
+        "phase": "Lisa Bank - v.0.0/0.0/Production",
+        "isDisabled": false,
+        "name": "Aprovação GMUD - N1",
+        "kind": "Task"
+    }, {
+        "phase": "Lisa Bank - v.0.0/0.0/Production",
+        "isDisabled": false,
+        "name": "Aprovação GMUD - N2",
+        "kind": "Task"
+    }, {
+        "applicationVersions": ["Local|Lisa Bank/0.0"],
+        "phase": "Lisa Bank - v.0.0/0.0/Production",
+        "isDisabled": false,
+        "previousTasks": ["Aprovação GMUD - N1", "Aprovação GMUD - N2"],
+        "name": "Deploy Produção",
+        "kind": "Task",
+        "type": "REST",
+        "parameters": {
+            "method": "GET",
+            "statusCheck": "false",
+            "url": "/api/deploy/time/15111"
+        },
+        "endpoint": "Backend",
+        "plugin": "REST/2.4"
+    }, {
+        "phase": "Lisa Bank - v.0.0/0.0/Production",
+        "isDisabled": false,
+        "previousTasks": ["Deploy Produção"],
+        "name": "Subir Monitoração API",
+        "kind": "Task",
+        "type": "REST",
+        "parameters": {
+            "method": "GET",
+            "statusCheck": "false",
+            "body": "",
+            "url": "/api/deploy/time/11111"
+        },
+        "endpoint": "Backend",
+        "plugin": "REST/2.4"
+    }, {
+        "phase": "Lisa Bank - v.0.0/0.0/Production",
+        "isDisabled": false,
+        "previousTasks": ["Deploy Produção"],
+        "name": "Subir Monitoração APM",
+        "kind": "Task",
+        "type": "REST",
+        "parameters": {
+            "method": "GET",
+            "statusCheck": "false",
+            "body": "",
+            "url": "/api/deploy/time/5111"
+        },
+        "endpoint": "Backend",
+        "plugin": "REST/2.4"
+    }, {
+        "phase": "Lisa Bank - v.0.0/0.0/Production",
+        "isDisabled": false,
+        "previousTasks": ["Subir Monitoração API", "Subir Monitoração APM"],
+        "name": "Notificar Times",
+        "kind": "Task",
+        "type": "REST",
+        "parameters": {
+            "method": "GET",
+            "statusCheck": "false",
+            "body": "",
+            "url": "/api/deploy/time/2111"
+        },
+        "endpoint": "Backend",
+        "plugin": "REST/2.4"
+    }]
+}

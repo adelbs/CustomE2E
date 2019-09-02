@@ -10,15 +10,10 @@ const config = {
         pwd: 'admin'
     },
     cdd: {
+        endpoint: 'http://localhost:8187',
         url: 'http://localhost:8187/cdd',
-        apiUrl: '/cdd/design/00000000-0000-0000-0000-000000000000/v1',
         usr: 'superuser@ca.com',
-        pwd: 'suser',
-        apiParams: {
-            releaseId: 1,
-            applicationId: 2,
-            applicationName: 'Lisa Bank'
-        }
+        pwd: 'suser'
     }
     
 }
